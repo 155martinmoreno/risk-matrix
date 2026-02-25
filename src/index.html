@@ -263,9 +263,12 @@
     table.risk-matrix th.likelihood-label {
       text-align: center;
       vertical-align: middle;
-      padding: 4px 6px;
-      font-size: 11px;
-      letter-spacing: 0;
+      padding: 0;
+      color: var(--axis-text);
+    }
+
+    table.risk-matrix th.likelihood-label svg {
+      display: block;
     }
 
     /* Matrix Table */
@@ -439,7 +442,7 @@
         </thead>
         <tbody>
           <tr data-likelihood="Very Likely">
-            <th class="axis-label likelihood-label" rowspan="5">L<br>I<br>K<br>E<br>L<br>I<br>H<br>O<br>O<br>D</th>
+            <th class="likelihood-label" rowspan="5"><svg width="24" height="140" viewBox="0 0 24 140"><text x="12" y="70" text-anchor="middle" dominant-baseline="central" transform="rotate(-90,12,70)" fill="currentColor" font-family="Segoe UI,Tahoma,Geneva,Verdana,sans-serif" font-size="13" font-weight="700" letter-spacing="2">LIKELIHOOD</text></svg></th>
             <th class="row-header">Very Likely</th>
             <td class="cell risk-medium" data-severity="Insignificant" data-risk="Medium">Medium</td>
             <td class="cell risk-medium" data-severity="Minor" data-risk="Medium">Medium</td>
