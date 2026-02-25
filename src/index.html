@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Risk Assessment Matrix</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #424242;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: #bdbdbd;
+      margin-bottom: 28px;
+    }
+
+    /* Control Panel */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 28px;
+      background: #333;
+      padding: 18px 28px;
+      border-radius: 10px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .control-group label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #9e9e9e;
+    }
+
+    .control-group select,
+    .control-group input[type="text"] {
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid #616161;
+      background: #505050;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      min-width: 160px;
+      appearance: auto;
+    }
+
+    .control-group input[type="text"] {
+      cursor: text;
+      min-width: 200px;
+    }
+
+    .control-group select:focus,
+    .control-group input[type="text"]:focus {
+      outline: none;
+      border-color: #90CAF9;
+    }
+
+.result-display {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      min-width: 180px;
+    }
+
+    .result-display .equals {
+      font-size: 20px;
+      color: #9e9e9e;
+    }
+
+    .result-badge {
+      padding: 6px 16px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      display: none;
+    }
+
+    .result-badge.visible {
+      display: inline-block;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .action-btn {
+      padding: 8px 16px;
+      border: 1px solid #616161;
+      border-radius: 6px;
+      background: transparent;
+      color: #bdbdbd;
+      font-size: 13px;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .action-btn:hover {
+      color: #fff;
+      border-color: #90CAF9;
+    }
+
+    .action-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    /* Matrix title (Jira + Risk Name) */
+    .matrix-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      text-align: left;
+      padding: 0;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .matrix-title.visible {
+      display: block;
+    }
+
+    .matrix-title .jira-id {
+      color: #90CAF9;
+    }
+
+    /* Matrix Container */
+    #matrix-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      padding: 20px;
+    }
+
+    .matrix-body {
+      display: flex;
+      align-items: center;
+    }
+
+    /* Y-axis label */
+    .y-axis-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-right: 10px;
+      user-select: none;
+      color: #e0e0e0;
+    }
+
+    .y-axis-label .arrow {
+      font-size: 18px;
+    }
+
+    .y-axis-label .y-text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    /* Table wrapper for x-axis label */
+    .table-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .x-axis-label {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #e0e0e0;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      user-select: none;
+    }
+
+    .x-axis-label .arrow {
+      font-size: 18px;
+    }
+
+    /* Matrix Table */
+    table.risk-matrix {
+      border-collapse: separate;
+      border-spacing: 3px;
+    }
+
+    table.risk-matrix th,
+    table.risk-matrix td {
+      text-align: center;
+      vertical-align: middle;
+      padding: 0;
+    }
+
+    table.risk-matrix th.corner {
+      width: 30px;
+      height: 30px;
+    }
+
+    table.risk-matrix th.col-header {
+      color: #e0e0e0;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 4px;
+      width: 100px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    table.risk-matrix th.row-header {
+      color: #e0e0e0;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px 4px 4px;
+      text-align: right;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    table.risk-matrix td.cell {
+      width: 100px;
+      height: 64px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #212121;
+      border-radius: 4px;
+      cursor: default;
+      transition: box-shadow 0.2s, transform 0.2s;
+      position: relative;
+    }
+
+    /* Highlighted cell with overlay badge */
+    table.risk-matrix td.cell.highlighted {
+      z-index: 2;
+    }
+
+    table.risk-matrix td.cell.highlighted::after {
+      content: '\2714';
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 20px;
+      height: 20px;
+      background: #212121;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 12px;
+      line-height: 20px;
+      text-align: center;
+    }
+
+/* Color classes */
+    .risk-low { background-color: #4CAF50; }
+    .risk-lowmed { background-color: #8BC34A; }
+    .risk-medium { background-color: #FFEB3B; }
+    .risk-medhi { background-color: #FF9800; }
+    .risk-high { background-color: #E53935; }
+    .risk-highest { background-color: #B71C1C; color: #fff; }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      table.risk-matrix td.cell {
+        width: 64px;
+        height: 48px;
+        font-size: 11px;
+      }
+      table.risk-matrix th.col-header {
+        width: 64px;
+        font-size: 10px;
+      }
+      table.risk-matrix th.row-header {
+        font-size: 10px;
+        padding-right: 6px;
+      }
+      .controls {
+        padding: 14px 16px;
+        gap: 12px;
+      }
+      h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Risk Assessment Matrix</h1>
+  <p class="subtitle">Likelihood &times; Severity = Risk Level</p>
+
+  <!-- Control Panel -->
+  <div class="controls">
+    <div class="control-group">
+      <label for="riskNameInput">Name</label>
+      <input type="text" id="riskNameInput" placeholder="e.g. PROJ-1234: Server Outage">
+    </div>
+    <div class="control-group">
+      <label for="likelihoodSelect">Likelihood</label>
+      <select id="likelihoodSelect">
+        <option value="">-- Select --</option>
+        <option value="Very Unlikely">Very Unlikely</option>
+        <option value="Unlikely">Unlikely</option>
+        <option value="Possible">Possible</option>
+        <option value="Likely">Likely</option>
+        <option value="Very Likely">Very Likely</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label for="severitySelect">Severity</label>
+      <select id="severitySelect">
+        <option value="">-- Select --</option>
+        <option value="Negligible">Negligible</option>
+        <option value="Minor">Minor</option>
+        <option value="Moderate">Moderate</option>
+        <option value="Significant">Significant</option>
+        <option value="Severe">Severe</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>&nbsp;</label>
+      <div class="result-display">
+        <span class="equals">=</span>
+        <span id="resultBadge" class="result-badge"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Matrix -->
+  <div id="matrix-container">
+    <div class="matrix-body">
+    <div class="y-axis-label">
+      <span class="y-text"><span>L</span><span>I</span><span>K</span><span>E</span><span>L</span><span>I</span><span>H</span><span>O</span><span>O</span><span>D</span></span>
+      <span class="arrow">&uarr;</span>
+    </div>
+    <div class="table-wrapper">
+      <div id="matrixTitle" class="matrix-title"></div>
+      <table class="risk-matrix" id="riskTable">
+        <thead>
+          <tr>
+            <th class="corner"></th>
+            <th class="col-header">Negligible</th>
+            <th class="col-header">Minor</th>
+            <th class="col-header">Moderate</th>
+            <th class="col-header">Significant</th>
+            <th class="col-header">Severe</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-likelihood="Very Likely">
+            <th class="row-header">Very Likely</th>
+            <td class="cell risk-lowmed" data-severity="Negligible" data-risk="Low Med">Low Med</td>
+            <td class="cell risk-medium" data-severity="Minor" data-risk="Medium">Medium</td>
+            <td class="cell risk-medhi" data-severity="Moderate" data-risk="Med Hi">Med Hi</td>
+            <td class="cell risk-high" data-severity="Significant" data-risk="High">High</td>
+            <td class="cell risk-highest" data-severity="Severe" data-risk="High">High</td>
+          </tr>
+          <tr data-likelihood="Likely">
+            <th class="row-header">Likely</th>
+            <td class="cell risk-low" data-severity="Negligible" data-risk="Low">Low</td>
+            <td class="cell risk-lowmed" data-severity="Minor" data-risk="Low Med">Low Med</td>
+            <td class="cell risk-medium" data-severity="Moderate" data-risk="Medium">Medium</td>
+            <td class="cell risk-medhi" data-severity="Significant" data-risk="Med Hi">Med Hi</td>
+            <td class="cell risk-high" data-severity="Severe" data-risk="High">High</td>
+          </tr>
+          <tr data-likelihood="Possible">
+            <th class="row-header">Possible</th>
+            <td class="cell risk-low" data-severity="Negligible" data-risk="Low">Low</td>
+            <td class="cell risk-lowmed" data-severity="Minor" data-risk="Low Med">Low Med</td>
+            <td class="cell risk-medium" data-severity="Moderate" data-risk="Medium">Medium</td>
+            <td class="cell risk-medhi" data-severity="Significant" data-risk="Med Hi">Med Hi</td>
+            <td class="cell risk-medhi" data-severity="Severe" data-risk="Med Hi">Med Hi</td>
+          </tr>
+          <tr data-likelihood="Unlikely">
+            <th class="row-header">Unlikely</th>
+            <td class="cell risk-low" data-severity="Negligible" data-risk="Low">Low</td>
+            <td class="cell risk-lowmed" data-severity="Minor" data-risk="Low Med">Low Med</td>
+            <td class="cell risk-lowmed" data-severity="Moderate" data-risk="Low Med">Low Med</td>
+            <td class="cell risk-medium" data-severity="Significant" data-risk="Medium">Medium</td>
+            <td class="cell risk-medhi" data-severity="Severe" data-risk="Med Hi">Med Hi</td>
+          </tr>
+          <tr data-likelihood="Very Unlikely">
+            <th class="row-header">Very Unlikely</th>
+            <td class="cell risk-low" data-severity="Negligible" data-risk="Low">Low</td>
+            <td class="cell risk-low" data-severity="Minor" data-risk="Low">Low</td>
+            <td class="cell risk-lowmed" data-severity="Moderate" data-risk="Low Med">Low Med</td>
+            <td class="cell risk-medium" data-severity="Significant" data-risk="Medium">Medium</td>
+            <td class="cell risk-medium" data-severity="Severe" data-risk="Medium">Medium</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="x-axis-label">
+        Severity <span class="arrow">&rarr;</span>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <div class="action-buttons">
+    <button id="copyBtn" class="action-btn">
+      <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+      Copy
+    </button>
+    <button id="downloadBtn" class="action-btn">
+      <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+      Download
+    </button>
+  </div>
+
+  <script>
+    (function() {
+      var likelihoodSelect = document.getElementById('likelihoodSelect');
+      var severitySelect = document.getElementById('severitySelect');
+      var riskNameInput = document.getElementById('riskNameInput');
+      var resultBadge = document.getElementById('resultBadge');
+      var matrixTitle = document.getElementById('matrixTitle');
+
+      var colorMap = {
+        'Low': '#4CAF50',
+        'Low Med': '#8BC34A',
+        'Medium': '#FFEB3B',
+        'Med Hi': '#FF9800',
+        'High': '#E53935'
+      };
+
+      var textColorMap = {
+        'Low': '#fff',
+        'Low Med': '#212121',
+        'Medium': '#212121',
+        'Med Hi': '#212121',
+        'High': '#fff'
+      };
+
+      function updateTitle() {
+        var name = riskNameInput.value.trim();
+        if (name) {
+          matrixTitle.textContent = name;
+          matrixTitle.classList.add('visible');
+        } else {
+          matrixTitle.classList.remove('visible');
+        }
+      }
+
+      function updateSelection() {
+        var likelihood = likelihoodSelect.value;
+        var severity = severitySelect.value;
+
+        // Remove all highlights
+        var cells = document.querySelectorAll('table.risk-matrix td.cell');
+        for (var i = 0; i < cells.length; i++) {
+          cells[i].classList.remove('highlighted');
+        }
+
+        // Hide badge by default
+        resultBadge.classList.remove('visible');
+        resultBadge.textContent = '';
+
+        if (!likelihood || !severity) return;
+
+        // Find the matching row
+        var row = document.querySelector('tr[data-likelihood="' + likelihood + '"]');
+        if (!row) return;
+
+        // Find the matching cell within the row
+        var cell = row.querySelector('td[data-severity="' + severity + '"]');
+        if (!cell) return;
+
+        cell.classList.add('highlighted');
+
+        var risk = cell.getAttribute('data-risk');
+        resultBadge.textContent = risk;
+        resultBadge.style.backgroundColor = colorMap[risk] || '#757575';
+        resultBadge.style.color = textColorMap[risk] || '#212121';
+        resultBadge.classList.add('visible');
+      }
+
+      likelihoodSelect.addEventListener('change', updateSelection);
+      severitySelect.addEventListener('change', updateSelection);
+      riskNameInput.addEventListener('input', updateTitle);
+
+      // Copy to clipboard
+      document.getElementById('copyBtn').addEventListener('click', function() {
+        var btn = this;
+        var matrixEl = document.getElementById('matrix-container');
+        html2canvas(matrixEl, { backgroundColor: '#424242', scale: 2 }).then(function(canvas) {
+          canvas.toBlob(function(blob) {
+            navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(function() {
+              var original = btn.innerHTML;
+              btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg> Copied!';
+              setTimeout(function() { btn.innerHTML = original; }, 1500);
+            });
+          });
+        });
+      });
+
+      // Download PNG
+      document.getElementById('downloadBtn').addEventListener('click', function() {
+        var matrixEl = document.getElementById('matrix-container');
+
+        html2canvas(matrixEl, { backgroundColor: '#424242', scale: 2 }).then(function(canvas) {
+
+          var name = riskNameInput.value.trim();
+          var filename = 'risk-matrix';
+          if (name) {
+            filename += '-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+          }
+          var link = document.createElement('a');
+          link.download = filename + '.png';
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
