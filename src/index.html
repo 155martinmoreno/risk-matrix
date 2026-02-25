@@ -222,13 +222,7 @@
       font-weight: 700;
       color: var(--matrix-title-color);
       text-align: left;
-      padding: 0;
-      margin-bottom: 12px;
-      display: none;
-    }
-
-    .matrix-title.visible {
-      display: block;
+      padding: 8px 4px 12px 4px;
     }
 
     /* Matrix Container */
@@ -313,8 +307,8 @@
     table.risk-matrix td.cell {
       width: 100px;
       height: 64px;
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 12px;
+      font-weight: 400;
       color: #212121;
       border-radius: 4px;
       cursor: default;
@@ -422,9 +416,13 @@
   <!-- Matrix -->
   <div id="matrix-container">
     <div class="table-wrapper">
-      <div id="matrixTitle" class="matrix-title"></div>
       <table class="risk-matrix" id="riskTable">
         <thead>
+          <tr id="matrixTitleRow" class="matrix-title-row" style="display:none">
+            <th class="corner"></th>
+            <th class="corner"></th>
+            <th id="matrixTitle" class="matrix-title" colspan="5"></th>
+          </tr>
           <tr>
             <th class="corner"></th>
             <th class="corner"></th>
@@ -518,13 +516,15 @@
         'High': '#fff'
       };
 
+      var matrixTitleRow = document.getElementById('matrixTitleRow');
+
       function updateTitle() {
         var name = riskNameInput.value.trim();
         if (name) {
           matrixTitle.textContent = name;
-          matrixTitle.classList.add('visible');
+          matrixTitleRow.style.display = '';
         } else {
-          matrixTitle.classList.remove('visible');
+          matrixTitleRow.style.display = 'none';
         }
       }
 
