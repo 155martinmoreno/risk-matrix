@@ -12,15 +12,85 @@
       box-sizing: border-box;
     }
 
+    /* Light theme (default) - cheerful colors */
+    :root {
+      --bg: #F0F7FF;
+      --text: #2D3748;
+      --text-secondary: #5A7A9B;
+      --controls-bg: #E1F0FF;
+      --controls-border: #A8D4FF;
+      --input-bg: #fff;
+      --input-border: #A8D4FF;
+      --input-text: #2D3748;
+      --input-focus: #3B9AE8;
+      --axis-text: #4A7BA8;
+      --matrix-title-color: #2D3748;
+      --action-border: #A8D4FF;
+      --action-text: #5A9ACF;
+      --action-hover-text: #2B75B0;
+      --action-hover-border: #3B9AE8;
+      --equals-color: #8BBDE0;
+      --matrix-bg: #F0F7FF;
+    }
+
+    /* Dark theme */
+    [data-theme="dark"] {
+      --bg: #424242;
+      --text: #fff;
+      --text-secondary: #bdbdbd;
+      --controls-bg: #333;
+      --controls-border: #616161;
+      --input-bg: #505050;
+      --input-border: #616161;
+      --input-text: #fff;
+      --input-focus: #90CAF9;
+      --axis-text: #e0e0e0;
+      --matrix-title-color: #fff;
+      --action-border: #616161;
+      --action-text: #bdbdbd;
+      --action-hover-text: #fff;
+      --action-hover-border: #90CAF9;
+      --equals-color: #9e9e9e;
+      --matrix-bg: #424242;
+    }
+
     body {
-      background-color: #424242;
-      color: #fff;
+      background-color: var(--bg);
+      color: var(--text);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 30px 20px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .top-bar {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      max-width: 800px;
+      margin-bottom: 12px;
+    }
+
+    #themeToggle {
+      padding: 6px 12px;
+      border: 1px solid var(--action-border);
+      border-radius: 20px;
+      background: transparent;
+      color: var(--action-text);
+      font-size: 13px;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #themeToggle:hover {
+      color: var(--action-hover-text);
+      border-color: var(--action-hover-border);
     }
 
     h1 {
@@ -32,7 +102,7 @@
 
     .subtitle {
       font-size: 15px;
-      color: #bdbdbd;
+      color: var(--text-secondary);
       margin-bottom: 28px;
     }
 
@@ -44,9 +114,10 @@
       align-items: center;
       justify-content: center;
       margin-bottom: 28px;
-      background: #333;
+      background: var(--controls-bg);
       padding: 18px 28px;
       border-radius: 10px;
+      transition: background 0.3s;
     }
 
     .control-group {
@@ -59,20 +130,21 @@
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 1px;
-      color: #9e9e9e;
+      color: var(--text-secondary);
     }
 
     .control-group select,
     .control-group input[type="text"] {
       padding: 8px 14px;
       border-radius: 6px;
-      border: 1px solid #616161;
-      background: #505050;
-      color: #fff;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--input-text);
       font-size: 14px;
       cursor: pointer;
       min-width: 160px;
       appearance: auto;
+      transition: background 0.3s, border-color 0.3s, color 0.3s;
     }
 
     .control-group input[type="text"] {
@@ -83,10 +155,10 @@
     .control-group select:focus,
     .control-group input[type="text"]:focus {
       outline: none;
-      border-color: #90CAF9;
+      border-color: var(--input-focus);
     }
 
-.result-display {
+    .result-display {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -96,7 +168,7 @@
 
     .result-display .equals {
       font-size: 20px;
-      color: #9e9e9e;
+      color: var(--equals-color);
     }
 
     .result-badge {
@@ -120,10 +192,10 @@
 
     .action-btn {
       padding: 8px 16px;
-      border: 1px solid #616161;
+      border: 1px solid var(--action-border);
       border-radius: 6px;
       background: transparent;
-      color: #bdbdbd;
+      color: var(--action-text);
       font-size: 13px;
       cursor: pointer;
       transition: color 0.2s, border-color 0.2s;
@@ -134,8 +206,8 @@
     }
 
     .action-btn:hover {
-      color: #fff;
-      border-color: #90CAF9;
+      color: var(--action-hover-text);
+      border-color: var(--action-hover-border);
     }
 
     .action-btn svg {
@@ -144,11 +216,11 @@
       fill: currentColor;
     }
 
-    /* Matrix title (Jira + Risk Name) */
+    /* Matrix title */
     .matrix-title {
       font-size: 20px;
       font-weight: 700;
-      color: #fff;
+      color: var(--matrix-title-color);
       text-align: left;
       padding: 0;
       margin-bottom: 12px;
@@ -157,10 +229,6 @@
 
     .matrix-title.visible {
       display: block;
-    }
-
-    .matrix-title .jira-id {
-      color: #90CAF9;
     }
 
     /* Matrix Container */
@@ -172,57 +240,32 @@
       padding: 20px;
     }
 
-    .matrix-body {
-      display: flex;
-      align-items: center;
-    }
-
-    /* Y-axis label */
-    .y-axis-label {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-right: 10px;
-      user-select: none;
-      color: #e0e0e0;
-    }
-
-    .y-axis-label .arrow {
-      font-size: 18px;
-    }
-
-    .y-axis-label .y-text {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    /* Table wrapper for x-axis label */
+    /* Table wrapper */
     .table-wrapper {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    .x-axis-label {
-      font-size: 15px;
+    table.risk-matrix th.axis-label {
+      font-size: 13px;
       font-weight: 700;
-      letter-spacing: 3px;
       text-transform: uppercase;
-      color: #e0e0e0;
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      user-select: none;
+      letter-spacing: 2px;
+      color: var(--axis-text);
+      padding: 8px;
     }
 
-    .x-axis-label .arrow {
-      font-size: 18px;
+    table.risk-matrix th.severity-label {
+      text-align: center;
+    }
+
+    table.risk-matrix th.likelihood-label {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      text-align: center;
+      vertical-align: middle;
+      padding: 12px 8px;
     }
 
     /* Matrix Table */
@@ -244,7 +287,7 @@
     }
 
     table.risk-matrix th.col-header {
-      color: #e0e0e0;
+      color: var(--axis-text);
       font-size: 12px;
       font-weight: 600;
       padding: 8px 4px;
@@ -254,7 +297,7 @@
     }
 
     table.risk-matrix th.row-header {
-      color: #e0e0e0;
+      color: var(--axis-text);
       font-size: 12px;
       font-weight: 600;
       padding: 4px 12px 4px 4px;
@@ -296,13 +339,10 @@
       text-align: center;
     }
 
-/* Color classes */
+    /* Color classes */
     .risk-low { background-color: #4CAF50; }
-    .risk-lowmed { background-color: #8BC34A; }
     .risk-medium { background-color: #FFEB3B; }
-    .risk-medhi { background-color: #FF9800; }
-    .risk-high { background-color: #E53935; }
-    .risk-highest { background-color: #B71C1C; color: #fff; }
+    .risk-high { background-color: #E53935; color: #fff; }
 
     /* Responsive */
     @media (max-width: 700px) {
@@ -329,6 +369,13 @@
 </head>
 <body>
 
+  <div class="top-bar">
+    <button id="themeToggle">
+      <span id="themeIcon">&#9789;</span>
+      <span id="themeLabel">Dark</span>
+    </button>
+  </div>
+
   <h1>Risk Assessment Matrix</h1>
   <p class="subtitle">Likelihood &times; Severity = Risk Level</p>
 
@@ -353,10 +400,10 @@
       <label for="severitySelect">Severity</label>
       <select id="severitySelect">
         <option value="">-- Select --</option>
-        <option value="Negligible">Negligible</option>
+        <option value="Insignificant">Insignificant</option>
         <option value="Minor">Minor</option>
         <option value="Moderate">Moderate</option>
-        <option value="Significant">Significant</option>
+        <option value="Major">Major</option>
         <option value="Severe">Severe</option>
       </select>
     </div>
@@ -371,71 +418,69 @@
 
   <!-- Matrix -->
   <div id="matrix-container">
-    <div class="matrix-body">
-    <div class="y-axis-label">
-      <span class="y-text"><span>L</span><span>I</span><span>K</span><span>E</span><span>L</span><span>I</span><span>H</span><span>O</span><span>O</span><span>D</span></span>
-      <span class="arrow">&uarr;</span>
-    </div>
     <div class="table-wrapper">
       <div id="matrixTitle" class="matrix-title"></div>
       <table class="risk-matrix" id="riskTable">
         <thead>
           <tr>
             <th class="corner"></th>
-            <th class="col-header">Negligible</th>
+            <th class="corner"></th>
+            <th class="axis-label severity-label" colspan="5">Severity</th>
+          </tr>
+          <tr>
+            <th class="corner"></th>
+            <th class="corner"></th>
+            <th class="col-header">Insignificant</th>
             <th class="col-header">Minor</th>
             <th class="col-header">Moderate</th>
-            <th class="col-header">Significant</th>
+            <th class="col-header">Major</th>
             <th class="col-header">Severe</th>
           </tr>
         </thead>
         <tbody>
           <tr data-likelihood="Very Likely">
+            <th class="axis-label likelihood-label" rowspan="5">Likelihood</th>
             <th class="row-header">Very Likely</th>
-            <td class="cell risk-lowmed" data-severity="Negligible" data-risk="Low Med">Low Med</td>
+            <td class="cell risk-medium" data-severity="Insignificant" data-risk="Medium">Medium</td>
             <td class="cell risk-medium" data-severity="Minor" data-risk="Medium">Medium</td>
-            <td class="cell risk-medhi" data-severity="Moderate" data-risk="Med Hi">Med Hi</td>
-            <td class="cell risk-high" data-severity="Significant" data-risk="High">High</td>
-            <td class="cell risk-highest" data-severity="Severe" data-risk="High">High</td>
+            <td class="cell risk-high" data-severity="Moderate" data-risk="High">High</td>
+            <td class="cell risk-high" data-severity="Major" data-risk="High">High</td>
+            <td class="cell risk-high" data-severity="Severe" data-risk="High">High</td>
           </tr>
           <tr data-likelihood="Likely">
             <th class="row-header">Likely</th>
-            <td class="cell risk-low" data-severity="Negligible" data-risk="Low">Low</td>
-            <td class="cell risk-lowmed" data-severity="Minor" data-risk="Low Med">Low Med</td>
+            <td class="cell risk-low" data-severity="Insignificant" data-risk="Low">Low</td>
+            <td class="cell risk-medium" data-severity="Minor" data-risk="Medium">Medium</td>
             <td class="cell risk-medium" data-severity="Moderate" data-risk="Medium">Medium</td>
-            <td class="cell risk-medhi" data-severity="Significant" data-risk="Med Hi">Med Hi</td>
+            <td class="cell risk-high" data-severity="Major" data-risk="High">High</td>
             <td class="cell risk-high" data-severity="Severe" data-risk="High">High</td>
           </tr>
           <tr data-likelihood="Possible">
             <th class="row-header">Possible</th>
-            <td class="cell risk-low" data-severity="Negligible" data-risk="Low">Low</td>
-            <td class="cell risk-lowmed" data-severity="Minor" data-risk="Low Med">Low Med</td>
+            <td class="cell risk-low" data-severity="Insignificant" data-risk="Low">Low</td>
+            <td class="cell risk-medium" data-severity="Minor" data-risk="Medium">Medium</td>
             <td class="cell risk-medium" data-severity="Moderate" data-risk="Medium">Medium</td>
-            <td class="cell risk-medhi" data-severity="Significant" data-risk="Med Hi">Med Hi</td>
-            <td class="cell risk-medhi" data-severity="Severe" data-risk="Med Hi">Med Hi</td>
+            <td class="cell risk-medium" data-severity="Major" data-risk="Medium">Medium</td>
+            <td class="cell risk-high" data-severity="Severe" data-risk="High">High</td>
           </tr>
           <tr data-likelihood="Unlikely">
             <th class="row-header">Unlikely</th>
-            <td class="cell risk-low" data-severity="Negligible" data-risk="Low">Low</td>
-            <td class="cell risk-lowmed" data-severity="Minor" data-risk="Low Med">Low Med</td>
-            <td class="cell risk-lowmed" data-severity="Moderate" data-risk="Low Med">Low Med</td>
-            <td class="cell risk-medium" data-severity="Significant" data-risk="Medium">Medium</td>
-            <td class="cell risk-medhi" data-severity="Severe" data-risk="Med Hi">Med Hi</td>
+            <td class="cell risk-low" data-severity="Insignificant" data-risk="Low">Low</td>
+            <td class="cell risk-low" data-severity="Minor" data-risk="Low">Low</td>
+            <td class="cell risk-medium" data-severity="Moderate" data-risk="Medium">Medium</td>
+            <td class="cell risk-medium" data-severity="Major" data-risk="Medium">Medium</td>
+            <td class="cell risk-medium" data-severity="Severe" data-risk="Medium">Medium</td>
           </tr>
           <tr data-likelihood="Very Unlikely">
             <th class="row-header">Very Unlikely</th>
-            <td class="cell risk-low" data-severity="Negligible" data-risk="Low">Low</td>
+            <td class="cell risk-low" data-severity="Insignificant" data-risk="Low">Low</td>
             <td class="cell risk-low" data-severity="Minor" data-risk="Low">Low</td>
-            <td class="cell risk-lowmed" data-severity="Moderate" data-risk="Low Med">Low Med</td>
-            <td class="cell risk-medium" data-severity="Significant" data-risk="Medium">Medium</td>
+            <td class="cell risk-low" data-severity="Moderate" data-risk="Low">Low</td>
+            <td class="cell risk-low" data-severity="Major" data-risk="Low">Low</td>
             <td class="cell risk-medium" data-severity="Severe" data-risk="Medium">Medium</td>
           </tr>
         </tbody>
       </table>
-      <div class="x-axis-label">
-        Severity <span class="arrow">&rarr;</span>
-      </div>
-    </div>
     </div>
   </div>
 
@@ -460,17 +505,13 @@
 
       var colorMap = {
         'Low': '#4CAF50',
-        'Low Med': '#8BC34A',
         'Medium': '#FFEB3B',
-        'Med Hi': '#FF9800',
         'High': '#E53935'
       };
 
       var textColorMap = {
         'Low': '#fff',
-        'Low Med': '#212121',
         'Medium': '#212121',
-        'Med Hi': '#212121',
         'High': '#fff'
       };
 
@@ -521,11 +562,34 @@
       severitySelect.addEventListener('change', updateSelection);
       riskNameInput.addEventListener('input', updateTitle);
 
+      // Theme toggle
+      var themeToggle = document.getElementById('themeToggle');
+      var themeIcon = document.getElementById('themeIcon');
+      var themeLabel = document.getElementById('themeLabel');
+
+      function getMatrixBg() {
+        return document.body.hasAttribute('data-theme') && document.body.getAttribute('data-theme') === 'dark'
+          ? '#424242' : '#FFF8F0';
+      }
+
+      themeToggle.addEventListener('click', function() {
+        var isDark = document.body.getAttribute('data-theme') === 'dark';
+        if (isDark) {
+          document.body.removeAttribute('data-theme');
+          themeIcon.innerHTML = '&#9789;';
+          themeLabel.textContent = 'Dark';
+        } else {
+          document.body.setAttribute('data-theme', 'dark');
+          themeIcon.innerHTML = '&#9788;';
+          themeLabel.textContent = 'Light';
+        }
+      });
+
       // Copy to clipboard
       document.getElementById('copyBtn').addEventListener('click', function() {
         var btn = this;
         var matrixEl = document.getElementById('matrix-container');
-        html2canvas(matrixEl, { backgroundColor: '#424242', scale: 2 }).then(function(canvas) {
+        html2canvas(matrixEl, { backgroundColor: getMatrixBg(), scale: 2 }).then(function(canvas) {
           canvas.toBlob(function(blob) {
             navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(function() {
               var original = btn.innerHTML;
@@ -540,7 +604,7 @@
       document.getElementById('downloadBtn').addEventListener('click', function() {
         var matrixEl = document.getElementById('matrix-container');
 
-        html2canvas(matrixEl, { backgroundColor: '#424242', scale: 2 }).then(function(canvas) {
+        html2canvas(matrixEl, { backgroundColor: getMatrixBg(), scale: 2 }).then(function(canvas) {
 
           var name = riskNameInput.value.trim();
           var filename = 'risk-matrix';
